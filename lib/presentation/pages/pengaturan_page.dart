@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'edit_profil_page.dart'; // Import halaman edit profil
 import 'lupa_password_page.dart'; // Import halaman awal ubah password
 import 'bantuan_page.dart'; // Import halaman FAQ
 
@@ -17,6 +16,7 @@ class _PengaturanPageState extends State<PengaturanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFDE7), // Menyesuaikan tema background Home
       appBar: AppBar(
         title: const Text("Pengaturan", style: TextStyle(color: Color(0xFF424242), fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFFE082),
@@ -32,17 +32,7 @@ class _PengaturanPageState extends State<PengaturanPage> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: Column(
               children: [
-                ListTile(
-                  leading: const Icon(Icons.person_outline, color: Colors.orange),
-                  title: const Text("Edit Profil"),
-                  subtitle: const Text("Ubah nama & foto"),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {
-                    // PINDAH KE HALAMAN EDIT PROFIL
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfilPage()));
-                  },
-                ),
-                const Divider(height: 1),
+                // MENU EDIT PROFIL DIHAPUS karena sudah ada di Navbar Profil
                 ListTile(
                   leading: const Icon(Icons.lock_outline, color: Colors.orange),
                   title: const Text("Ubah Password"),
