@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'kegiatan_pages.dart';
 import 'app_state.dart'; 
 import 'pengaturan_page.dart'; 
-import 'login_page.dart'; // <--- IMPORT HALAMAN LOGIN
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,40 +12,60 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Fungsi refresh saat kembali dari halaman detail
   void refresh() => setState(() {});
+
+  final List<Map<String, dynamic>> daftarUkm = [
+    {'name': 'E-sports', 'icon': Icons.sports_esports, 'color': const Color(0xFFE1BEE7)},
+    {'name': 'PSHT', 'icon': Icons.sports_martial_arts, 'color': const Color(0xFFFFCCBC)},
+    {'name': 'Futsal', 'icon': Icons.sports_soccer, 'color': const Color(0xFFC8E6C9)},
+    {'name': 'Pencinta Alam', 'icon': Icons.terrain, 'color': const Color(0xFFB2DFDB)},
+    {'name': 'Basket', 'icon': Icons.sports_basketball, 'color': const Color(0xFFFFE0B2)},
+    {'name': 'Seni Tari', 'icon': Icons.accessibility_new, 'color': const Color(0xFFF8BBD0)},
+    {'name': 'Taekwondo', 'icon': Icons.kitesurfing, 'color': const Color(0xFFB3E5FC)},
+    {'name': 'Seni Rupa', 'icon': Icons.palette, 'color': const Color(0xFFFFF9C4)},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> daftarUkm = [
-      {'name': 'E-sports', 'icon': Icons.sports_esports},
-      {'name': 'PSHT', 'icon': Icons.sports_martial_arts},
-      {'name': 'Futsal', 'icon': Icons.sports_soccer},
-      {'name': 'Pencinta Alam', 'icon': Icons.terrain},
-      {'name': 'Basket', 'icon': Icons.sports_basketball},
-      {'name': 'Seni Tari', 'icon': Icons.accessibility_new},
-      {'name': 'Taekwondo', 'icon': Icons.kitesurfing},
-      {'name': 'Seni Rupa', 'icon': Icons.palette},
-    ];
-
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFDE7),
       appBar: AppBar(
         title: const Text('Dashboard SIMUKA', style: TextStyle(color: Color(0xFF424242), fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFFFE082),
         centerTitle: true,
         elevation: 0,
       ),
-      // Panggil fungsi Drawer di sini
       drawer: _buildDrawer(context),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Selamat Datang 👋', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            const Text('Kelola UKM Kampus dengan mudah', style: TextStyle(color: Colors.grey)),
+            const Text('Coming Soon ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 110,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildEventCard("Turnamen Mobile Legends", "25 Jan 2026", const Color(0xFFFFF59D), true),
+                  _buildEventCard("Lomba Tari Tradisional", "02 Feb 2026", const Color(0xFFFFF59D), true),
+                ],
+              ),
+            ),
             const SizedBox(height: 20),
-            _buildSummarySection(),
+            const Text('Event Terlaksana ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 80,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildEventCard("Futsal Cup 2025", "Selesai", const Color(0xFFF5F5F5), false),
+                  _buildEventCard("Diklat Alam XV", "Selesai", const Color(0xFFF5F5F5), false),
+                ],
+              ),
+            ),
             const SizedBox(height: 25),
             const Text('Pilih UKM', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 15),
@@ -57,39 +77,52 @@ class _HomePageState extends State<HomePage> {
               itemCount: daftarUkm.length,
               itemBuilder: (context, index) {
                 String ukmName = daftarUkm[index]['name'];
+                Color ukmColor = daftarUkm[index]['color'];
                 bool hasEvent = AppState.ukmEventStatus[ukmName] ?? false;
 
                 return InkWell(
                   onTap: () async {
-                    // Masuk ke Menu Kegiatan
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => KegiatanPage(ukmName: ukmName)));
-                    refresh(); // Refresh saat kembali
+                    // --- BAGIAN YANG DIPERBAIKI (MENAMBAHKAN themeColor) ---
+                    await Navigator.push(
+                      context, 
+                      MaterialPageRoute(
+                        builder: (context) => KegiatanPage(
+                          ukmName: ukmName, 
+                          themeColor: ukmColor, // Tambahkan ini agar tidak error
+                        ),
+                      ),
+                    );
+                    // -------------------------------------------------------
+                    refresh();
                   },
-                  child: Stack(
-                    children: [
-                      Card(
-                        color: const Color(0xFFFFE082),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                        child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ukmColor,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.black12, width: 0.5),
+                    ),
+                    child: Stack(
+                      children: [
+                        Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(daftarUkm[index]['icon'], size: 40),
-                              Text(ukmName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Icon(daftarUkm[index]['icon'], size: 40, color: const Color(0xFF424242)),
+                              Text(ukmName, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF424242))),
                             ],
                           ),
                         ),
-                      ),
-                      if (hasEvent)
-                        Positioned(
-                          top: 10, right: 10,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(8)),
-                            child: const Text('EVENT!', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                        if (hasEvent)
+                          Positioned(
+                            top: 10, right: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(8)),
+                              child: const Text('EVENT!', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
@@ -100,61 +133,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSummarySection() {
-    return Row(
-      children: [
-        _summaryCard('Anggota', '120'),
-        const SizedBox(width: 10),
-        _summaryCard('Kegiatan', '24'),
-        const SizedBox(width: 10),
-        _summaryCard('Event', '5'),
-      ],
-    );
-  }
-
-  Widget _summaryCard(String label, String value) {
-    return Expanded(
+  Widget _buildEventCard(String title, String status, Color color, bool isBig) {
+    return GestureDetector(
+      onTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Detail: $title"))),
       child: Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(color: Colors.yellow[50], borderRadius: BorderRadius.circular(15)),
-        child: Column(children: [
-          Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-        ]),
+        width: isBig ? 240 : 160,
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.black12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            const SizedBox(height: 4),
+            Text(status, style: const TextStyle(color: Colors.black54, fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
 
-  // ================= DRAWER (UPDATED) =================
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: Column(children: [
-        // Header Profil
         const UserAccountsDrawerHeader(
           decoration: BoxDecoration(color: Color(0xFFFFE082)),
           accountName: Text('Admin UKM', style: TextStyle(color: Colors.black)),
           accountEmail: Text('admin@simuka.id', style: TextStyle(color: Colors.black)),
           currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.person)),
         ),
-        
-        // Menu Home
         ListTile(
           leading: const Icon(Icons.home), 
           title: const Text('Home'), 
           onTap: () => Navigator.pop(context)
         ),
-        
-        // Menu Pengaturan
         ListTile(
           leading: const Icon(Icons.settings), 
           title: const Text('Pengaturan'), 
           onTap: () {
-            Navigator.pop(context); // Tutup drawer
+            Navigator.pop(context);
             Navigator.push(context, MaterialPageRoute(builder: (context) => const PengaturanPage()));
           }
         ),
-
-        // Menu Tentang Aplikasi
         ListTile(
           leading: const Icon(Icons.info_outline), 
           title: const Text('Tentang Aplikasi'), 
@@ -162,71 +187,46 @@ class _HomePageState extends State<HomePage> {
             Navigator.pop(context);
             showDialog(
               context: context,
-              builder: (context) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  title: const Text("Tentang SIMUKA", style: TextStyle(fontWeight: FontWeight.bold)),
-                  content: const SingleChildScrollView(
-                    child: Text(
-                      '''SIMUKA (Sistem Informasi Manajemen Unit Kegiatan Mahasiswa) merupakan aplikasi yang dirancang untuk mendukung pengelolaan dan pengembangan Unit Kegiatan Mahasiswa (UKM) secara terintegrasi.\n\nDengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan.''',
-                      textAlign: TextAlign.justify, 
-                      style: TextStyle(fontSize: 14, height: 1.5),
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Tutup", style: TextStyle(color: Colors.orange)),
-                    ),
-                  ],
-                );
-              },
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                title: const Text("Tentang SIMUKA", style: TextStyle(fontWeight: FontWeight.bold)),
+                content: const Text(
+                  '''SIMUKA (Sistem Informasi Manajemen Unit Kegiatan Mahasiswa) merupakan aplikasi yang dirancang untuk mendukung pengelolaan dan pengembangan Unit Kegiatan Mahasiswa (UKM) secara terintegrasi.\n\nDengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan.''',
+                  textAlign: TextAlign.justify,
+                ),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(context), child: const Text("Tutup")),
+                ],
+              ),
             );
           }
         ),
-
         const Spacer(),
         const Divider(),
-        
-        // ================= TOMBOL LOG OUT =================
         ListTile(
           leading: const Icon(Icons.logout, color: Colors.red), 
           title: const Text('Log Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)), 
           onTap: () {
-            // Tutup drawer
             Navigator.pop(context);
-
-            // Munculkan Dialog Konfirmasi
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                title: const Text("Konfirmasi Keluar"),
-                content: const Text("Apakah Anda yakin ingin logout?"),
+                title: const Text("Konfirmasi"),
+                content: const Text("Yakin ingin logout?"),
                 actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Batal", style: TextStyle(color: Colors.grey)),
-                  ),
+                  TextButton(onPressed: () => Navigator.pop(context), child: const Text("Batal")),
                   TextButton(
                     onPressed: () {
-                      // Tutup dialog
                       Navigator.pop(context);
-                      // Keluar dan hapus history halaman (Kembali ke Login)
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()), 
-                        (route) => false,
-                      );
-                    },
-                    child: const Text("Keluar", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
+                    }, 
+                    child: const Text("Keluar", style: TextStyle(color: Colors.red))
                   ),
                 ],
               ),
             );
           }
         ),
-        
         const SizedBox(height: 20),
       ]),
     );
