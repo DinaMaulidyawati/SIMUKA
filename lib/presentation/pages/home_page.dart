@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'kegiatan_pages.dart';
 import 'app_state.dart'; 
-import 'pengaturan_page.dart'; // Pastikan file ini sudah ada
+import 'pengaturan_page.dart'; 
+import 'login_page.dart'; // <--- IMPORT HALAMAN LOGIN
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -143,25 +144,22 @@ class _HomePageState extends State<HomePage> {
           onTap: () => Navigator.pop(context)
         ),
         
-        // --- BAGIAN PENGATURAN YANG SUDAH DIPERBAIKI ---
+        // Menu Pengaturan
         ListTile(
           leading: const Icon(Icons.settings), 
           title: const Text('Pengaturan'), 
           onTap: () {
-            Navigator.pop(context); // Tutup drawer dulu
-            // Pindah ke halaman Pengaturan
+            Navigator.pop(context); // Tutup drawer
             Navigator.push(context, MaterialPageRoute(builder: (context) => const PengaturanPage()));
           }
         ),
-        // ----------------------------------------------
 
-        // === MENU TENTANG APLIKASI ===
+        // Menu Tentang Aplikasi
         ListTile(
           leading: const Icon(Icons.info_outline), 
           title: const Text('Tentang Aplikasi'), 
           onTap: () {
             Navigator.pop(context);
-
             showDialog(
               context: context,
               builder: (context) {
@@ -170,11 +168,7 @@ class _HomePageState extends State<HomePage> {
                   title: const Text("Tentang SIMUKA", style: TextStyle(fontWeight: FontWeight.bold)),
                   content: const SingleChildScrollView(
                     child: Text(
-                      '''SIMUKA (Sistem Informasi Manajemen Unit Kegiatan Mahasiswa) merupakan aplikasi yang dirancang untuk mendukung pengelolaan dan pengembangan Unit Kegiatan Mahasiswa (UKM) secara terintegrasi.
-
-Aplikasi ini menjadi wadah dalam pencatatan, pengelolaan, dan pemantauan seluruh kegiatan UKM. Melalui SIMUKA, pengguna dapat melihat informasi kegiatan, memantau perkembangan UKM dari waktu ke waktu, serta mengelola data organisasi secara lebih terstruktur.
-
-Dengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan dan meningkatkan kualitas aktivitas kemahasiswaan di lingkungan kampus.''',
+                      '''SIMUKA (Sistem Informasi Manajemen Unit Kegiatan Mahasiswa) merupakan aplikasi yang dirancang untuk mendukung pengelolaan dan pengembangan Unit Kegiatan Mahasiswa (UKM) secara terintegrasi.\n\nDengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan.''',
                       textAlign: TextAlign.justify, 
                       style: TextStyle(fontSize: 14, height: 1.5),
                     ),
@@ -191,18 +185,45 @@ Dengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjuta
           }
         ),
 
-        // Spacer biar Log Out kedorong ke bawah
         const Spacer(),
-        
         const Divider(),
         
-        // Menu Log Out
+        // ================= TOMBOL LOG OUT =================
         ListTile(
           leading: const Icon(Icons.logout, color: Colors.red), 
           title: const Text('Log Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)), 
           onTap: () {
-             Navigator.pop(context);
-             // Tambahin logika logout di sini nanti
+            // Tutup drawer
+            Navigator.pop(context);
+
+            // Munculkan Dialog Konfirmasi
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                title: const Text("Konfirmasi Keluar"),
+                content: const Text("Apakah Anda yakin ingin logout?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Tutup dialog
+                      Navigator.pop(context);
+                      // Keluar dan hapus history halaman (Kembali ke Login)
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()), 
+                        (route) => false,
+                      );
+                    },
+                    child: const Text("Keluar", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            );
           }
         ),
         
