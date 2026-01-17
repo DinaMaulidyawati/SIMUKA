@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'kegiatan_pages.dart';
 import 'app_state.dart'; 
+import 'pengaturan_page.dart'; // Pastikan file ini sudah ada
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -59,9 +60,9 @@ class _HomePageState extends State<HomePage> {
 
                 return InkWell(
                   onTap: () async {
-                    // Masuk ke Menu Kegiatan (di dalamnya sudah ada menu Anggota)
+                    // Masuk ke Menu Kegiatan
                     await Navigator.push(context, MaterialPageRoute(builder: (context) => KegiatanPage(ukmName: ukmName)));
-                    refresh(); // Refresh saat kembali untuk cek status EVENT!
+                    refresh(); // Refresh saat kembali
                   },
                   child: Stack(
                     children: [
@@ -123,7 +124,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ================= DRAWER YANG SUDAH DIPERBAIKI =================
+  // ================= DRAWER (UPDATED) =================
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: Column(children: [
@@ -142,22 +143,25 @@ class _HomePageState extends State<HomePage> {
           onTap: () => Navigator.pop(context)
         ),
         
-        // Menu Pengaturan
+        // --- BAGIAN PENGATURAN YANG SUDAH DIPERBAIKI ---
         ListTile(
           leading: const Icon(Icons.settings), 
           title: const Text('Pengaturan'), 
-          onTap: () {}
+          onTap: () {
+            Navigator.pop(context); // Tutup drawer dulu
+            // Pindah ke halaman Pengaturan
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const PengaturanPage()));
+          }
         ),
+        // ----------------------------------------------
 
-        // === MENU TENTANG APLIKASI (UPDATED) ===
+        // === MENU TENTANG APLIKASI ===
         ListTile(
           leading: const Icon(Icons.info_outline), 
           title: const Text('Tentang Aplikasi'), 
           onTap: () {
-            // Tutup drawer dulu biar rapi
             Navigator.pop(context);
 
-            // Tampilkan Dialog berisi teks deskripsi SIMUKA
             showDialog(
               context: context,
               builder: (context) {
@@ -167,10 +171,12 @@ class _HomePageState extends State<HomePage> {
                   content: const SingleChildScrollView(
                     child: Text(
                       '''SIMUKA (Sistem Informasi Manajemen Unit Kegiatan Mahasiswa) merupakan aplikasi yang dirancang untuk mendukung pengelolaan dan pengembangan Unit Kegiatan Mahasiswa (UKM) secara terintegrasi.
-                      Aplikasi ini menjadi wadah dalam pencatatan, pengelolaan, dan pemantauan seluruh kegiatan UKM. Melalui SIMUKA, pengguna dapat melihat informasi kegiatan, memantau perkembangan UKM dari waktu ke waktu, serta mengelola data organisasi secara lebih terstruktur.
-                      Dengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan dan meningkatkan kualitas aktivitas kemahasiswaan di lingkungan kampus.''',
-                      textAlign: TextAlign.justify, // Biar teksnya rata kanan-kiri rapi
-                      style: TextStyle(fontSize: 14, height: 1.5), // Spasi antar baris enak dibaca
+
+Aplikasi ini menjadi wadah dalam pencatatan, pengelolaan, dan pemantauan seluruh kegiatan UKM. Melalui SIMUKA, pengguna dapat melihat informasi kegiatan, memantau perkembangan UKM dari waktu ke waktu, serta mengelola data organisasi secara lebih terstruktur.
+
+Dengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan dan meningkatkan kualitas aktivitas kemahasiswaan di lingkungan kampus.''',
+                      textAlign: TextAlign.justify, 
+                      style: TextStyle(fontSize: 14, height: 1.5),
                     ),
                   ),
                   actions: [
@@ -190,7 +196,7 @@ class _HomePageState extends State<HomePage> {
         
         const Divider(),
         
-        // Menu Log Out (Tetap aman di bawah!)
+        // Menu Log Out
         ListTile(
           leading: const Icon(Icons.logout, color: Colors.red), 
           title: const Text('Log Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)), 
@@ -200,8 +206,8 @@ class _HomePageState extends State<HomePage> {
           }
         ),
         
-          const SizedBox(height: 20),
-        ]),
-      );
-    }
+        const SizedBox(height: 20),
+      ]),
+    );
   }
+}
