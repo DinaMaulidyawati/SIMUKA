@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../kegiatan/kegiatan_pages.dart';
-import '../state/app_state.dart'; 
-import '../profile/pengaturan_page.dart'; 
-import '../auth/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../core/routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,38 +11,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void refresh() => setState(() {});
-
   int _currentIndex = 0;
 
-  // KONFIGURASI PALET WARNA (Sesuai Gambar Referensi)
-  static const Color colorBackground = Color(0xFFF0F3FA); // Biru Pucat (Latar belakang utama)
-  static const Color colorPrimaryDark = Color(0xFF395886); // Biru Gelap (Teks & Header)
-  static const Color colorPrimaryBlue = Color(0xFF628ECB); // Biru Utama (Tombol/Aksen)
-  static const Color colorSoftBlue = Color(0xFFB1C9EF);    // Biru Muda (Kartu)
+  // KONFIGURASI PALET WARNA (Konsisten dengan Tema Biru Profesional)
+  static const Color colorBackground = Color(0xFFF0F3FA); 
+  static const Color colorPrimaryDark = Color(0xFF395886); 
+  static const Color colorPrimaryBlue = Color(0xFF628ECB); 
+  static const Color colorSoftBlue = Color(0xFFB1C9EF);    
   static const Color colorWhite = Colors.white;
 
   final List<Map<String, dynamic>> daftarUkm = [
-    {'name': 'E-sports', 'icon': Icons.sports_esports, 'color': colorWhite},
-    {'name': 'PSHT', 'icon': Icons.sports_martial_arts, 'color': colorWhite},
-    {'name': 'Futsal', 'icon': Icons.sports_soccer, 'color': colorWhite},
-    {'name': 'Pencinta Alam', 'icon': Icons.terrain, 'color': colorWhite},
-    {'name': 'Basket', 'icon': Icons.sports_basketball, 'color': colorWhite},
-    {'name': 'Seni Tari', 'icon': Icons.accessibility_new, 'color': colorWhite},
-    {'name': 'Taekwondo', 'icon': Icons.kitesurfing, 'color': colorWhite},
-    {'name': 'Seni Rupa', 'icon': Icons.palette, 'color': colorWhite},
+    {'name': 'E-sports', 'icon': Icons.sports_esports},
+    {'name': 'PSHT', 'icon': Icons.sports_martial_arts},
+    {'name': 'Futsal', 'icon': Icons.sports_soccer},
+    {'name': 'Pencinta Alam', 'icon': Icons.terrain},
+    {'name': 'Basket', 'icon': Icons.sports_basketball},
+    {'name': 'Seni Tari', 'icon': Icons.accessibility_new},
+    {'name': 'Taekwondo', 'icon': Icons.kitesurfing},
+    {'name': 'Seni Rupa', 'icon': Icons.palette},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorBackground, // Latar belakang abu-biru muda seperti gambar
+      backgroundColor: colorBackground,
       appBar: AppBar(
         title: Text(
           _currentIndex == 0 ? 'Dashboard' : (_currentIndex == 1 ? 'Jadwal' : (_currentIndex == 2 ? 'Notifikasi' : 'Profil')),
           style: const TextStyle(color: colorPrimaryDark, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.transparent, // AppBar transparan agar menyatu dengan latar
+        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
         iconTheme: const IconThemeData(color: colorPrimaryDark),
@@ -54,112 +51,160 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- 1. DASHBOARD (Sesuai gaya gambar referensi) ---
+  Widget _buildCurrentPage() {
+    switch (_currentIndex) {
+      case 3:
+        return _buildProfilPage();
+      default:
+        return _buildDashboardHome();
+    }
+  }
+
+  // --- 1. DASHBOARD (Dinamis dengan Firebase) ---
   Widget _buildDashboardHome() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Selamat datang di,", style: TextStyle(color: colorPrimaryDark, fontSize: 14)),
-          const Text("SIMUKA App", style: TextStyle(color: colorPrimaryDark, fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          
-          // Card Utama (Mirip card "Agus Rukanda" di gambar)
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: colorPrimaryDark,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow(color: colorPrimaryDark.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final user = FirebaseAuth.instance.currentUser;
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('users').doc(user?.uid).snapshots(),
+      builder: (context, snapshot) {
+        // Data default jika masih loading atau data tidak ditemukan
+        String nim = "No Data";
+        String nama = "User SIMUKA";
+        String role = "Anggota";
+
+        if (snapshot.hasData && snapshot.data!.exists) {
+          var data = snapshot.data!.data() as Map<String, dynamic>;
+          nim = data['nim'] ?? "No NIM";
+          nama = data['nama'] ?? "User SIMUKA";
+          role = data['role'] ?? "Anggota";
+        }
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Selamat datang di,", style: TextStyle(color: colorPrimaryDark, fontSize: 14)),
+              const Text("SIMUKA App", style: TextStyle(color: colorPrimaryDark, fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              
+              // Card Utama Dinamis
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: colorPrimaryDark,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [BoxShadow(color: colorPrimaryDark.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("1983242342", style: TextStyle(color: colorSoftBlue, fontSize: 12)),
-                    Text("Admin SIMUKA", style: TextStyle(color: colorWhite, fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Text("Sistem Informasi UKM", style: TextStyle(color: colorWhite, fontSize: 12)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(nim, style: const TextStyle(color: colorSoftBlue, fontSize: 12)),
+                        Text(nama, style: const TextStyle(color: colorWhite, fontSize: 18, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 10),
+                        Text("Role: $role", style: const TextStyle(color: colorWhite, fontSize: 12)),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(color: colorWhite.withOpacity(0.2), shape: BoxShape.circle),
+                      child: const Icon(Icons.stars, color: colorWhite, size: 30),
+                    )
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(color: colorWhite.withOpacity(0.2), shape: BoxShape.circle),
-                  child: const Icon(Icons.stars, color: colorWhite, size: 30),
-                )
-              ],
-            ),
+              ),
+              
+              const SizedBox(height: 25),
+              const Text("Menu UKM", style: TextStyle(color: colorPrimaryDark, fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 15),
+              
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, mainAxisSpacing: 15, crossAxisSpacing: 15, childAspectRatio: 0.8),
+                itemCount: daftarUkm.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: colorWhite,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+                        ),
+                        child: Icon(daftarUkm[index]['icon'], color: colorPrimaryBlue),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(daftarUkm[index]['name'], textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: colorPrimaryDark, fontWeight: FontWeight.w500)),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
-          
-          const SizedBox(height: 25),
-          const Text("Menu UKM", style: TextStyle(color: colorPrimaryDark, fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 15),
-          
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, mainAxisSpacing: 15, crossAxisSpacing: 15, childAspectRatio: 0.8),
-            itemCount: daftarUkm.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: colorWhite,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
-                    ),
-                    child: Icon(daftarUkm[index]['icon'], color: colorPrimaryBlue),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(daftarUkm[index]['name'], textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, color: colorPrimaryDark, fontWeight: FontWeight.w500)),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 
-  // --- 2. HALAMAN PROFIL (Mirip gaya gambar) ---
+  // --- 2. HALAMAN PROFIL (Dinamis dengan Firebase) ---
   Widget _buildProfilPage() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          const CircleAvatar(
-            radius: 50,
-            backgroundColor: colorSoftBlue,
-            child: Icon(Icons.person, size: 50, color: colorWhite),
-          ),
-          const SizedBox(height: 15),
-          const Text("User Account", style: TextStyle(color: colorPrimaryDark, fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 30),
-          
-          _buildProfileTile(Icons.email, "Email", "user@simuka.id"),
-          _buildProfileTile(Icons.phone, "Telepon", "0812-XXXX-XXXX"),
-          
-          const SizedBox(height: 30),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorPrimaryBlue,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    final user = FirebaseAuth.instance.currentUser;
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('users').doc(user?.uid).snapshots(),
+      builder: (context, snapshot) {
+        String email = user?.email ?? "No Email";
+        String nama = "User SIMUKA";
+        String jurusan = "Belum Diatur";
+
+        if (snapshot.hasData && snapshot.data!.exists) {
+          var data = snapshot.data!.data() as Map<String, dynamic>;
+          nama = data['nama'] ?? nama;
+          jurusan = data['jurusan'] ?? jurusan;
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              const CircleAvatar(
+                radius: 50,
+                backgroundColor: colorSoftBlue,
+                child: Icon(Icons.person, size: 50, color: colorWhite),
               ),
-              child: const Text("Simpan Perubahan", style: TextStyle(color: colorWhite)),
-            ),
-          )
-        ],
-      ),
+              const SizedBox(height: 15),
+              Text(nama, style: const TextStyle(color: colorPrimaryDark, fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 30),
+              
+              _buildProfileTile(Icons.email, "Email", email),
+              _buildProfileTile(Icons.school, "Jurusan", jurusan),
+              
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.login);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  child: const Text("Logout Akun", style: TextStyle(color: colorWhite)),
+                ),
+              )
+            ],
+          ),
+        );
+      }
     );
   }
 
@@ -211,11 +256,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCurrentPage() {
-    if (_currentIndex == 3) return _buildProfilPage();
-    return _buildDashboardHome(); // Sederhanakan switch untuk contoh ini
-  }
-
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       backgroundColor: colorBackground,
@@ -223,10 +263,17 @@ class _HomePageState extends State<HomePage> {
         children: [
           const UserAccountsDrawerHeader(
             decoration: BoxDecoration(color: colorPrimaryDark),
-            accountName: Text("SIMUKA Admin"),
-            accountEmail: Text("admin@simuka.id"),
+            accountName: Text("SIMUKA User"),
+            accountEmail: Text("Manajemen UKM Mahasiswa"),
           ),
-          ListTile(leading: const Icon(Icons.settings, color: colorPrimaryDark), title: const Text("Pengaturan"), onTap: () {}),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.redAccent),
+            title: const Text("Logout"),
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.login);
+            },
+          ),
         ],
       ),
     );

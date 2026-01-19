@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'core/routes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("✅ Firebase Terhubung");
+  } catch (e) {
+    print("❌ Firebase Error: $e");
+  }
+
   runApp(const SimukaApp());
 }
 
@@ -13,16 +26,17 @@ class SimukaApp extends StatelessWidget {
     return MaterialApp(
       title: 'SIMUKA',
       debugShowCheckedModeBanner: false,
-
-      // Routing
+      // Menggunakan initialRoute dan routes secara konsisten
       initialRoute: AppRoutes.login,
       routes: AppRoutes.routes,
-
-      // Theme 
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF4F8FF),
-        primaryColor: const Color(0xFF5B8DEF),
+        scaffoldBackgroundColor: const Color(0xFFF0F3FA),
+        primaryColor: const Color(0xFF395886),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF395886),
+          primary: const Color(0xFF395886),
+        ),
       ),
     );
   }

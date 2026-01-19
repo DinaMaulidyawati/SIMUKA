@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976862139604",
+    "project_id": "simuka-3c502",
+    "storage_bucket": "simuka-3c502.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976862139604:android:8c4c3c16f517651cb99741",
+        "android_client_info": {
+          "package_name": "com.example.simuka"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYge9uY_ejIKNNf6grZzWm6v5EaUCP0ig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,175 +1,214 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/routes.dart'; // Pastikan path ini benar sesuai struktur folder Anda
+import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
+  final emailOrNimController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _isObscure = true;
+  bool _isLoading = false;
+
+  Future<void> signIn() async {
+    // Validasi input kosong
+    if (emailOrNimController.text.trim().isEmpty || passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email dan Password tidak boleh kosong")),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      String loginIdentity = emailOrNimController.text.trim();
+
+      // Logika otomatis jika input adalah NIM (angka saja), tambahkan domain kampus
+      if (RegExp(r'^[0-9]+$').hasMatch(loginIdentity)) {
+        loginIdentity = "$loginIdentity@student.uisi.ac.id";
+      }
+
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: loginIdentity,
+        password: passwordController.text.trim(),
+      );
+
+      // Jika berhasil, pindah ke halaman Home dan hapus semua history route
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = "Terjadi kesalahan";
+      if (e.code == 'user-not-found') message = "Akun tidak ditemukan";
+      if (e.code == 'wrong-password') message = "Password salah";
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F8FF),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _header(),
-            _loginCard(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// HEADER
-  Widget _header() {
-    return Container(
-      height: 300,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Color(0xFF5B8DEF),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text(
-            'SIMUKA',
-            style: TextStyle(
-              fontSize: 38,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: 2,
-            ),
+      backgroundColor: const Color(0xFFF0F3FA),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF395886), Color(0xFF638ECB)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          SizedBox(height: 8),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              'Sistem Informasi Manajemen Unit Kegiatan Mahasiswa Kampus',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white70,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.school_rounded, size: 80, color: Colors.white),
+                  ),
+                  const SizedBox(height: 15),
+                  const Text(
+                    "SIMUKA",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const Text(
+                    "Sistem Informasi Manajemen UKM",
+                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 40),
+                  Container(
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Welcome Back",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF395886),
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        TextField(
+                          controller: emailOrNimController,
+                          decoration: InputDecoration(
+                            labelText: "NIM / Email",
+                            prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF638ECB)),
+                            filled: true,
+                            fillColor: const Color(0xFFF0F3FA),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: passwordController,
+                          obscureText: _isObscure,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF638ECB)),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isObscure ? Icons.visibility_off : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () => setState(() => _isObscure = !_isObscure),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFF0F3FA),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF638ECB), Color(0xFF395886)],
+                            ),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : signIn,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                            ),
+                            child: _isLoading 
+                              ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                              : const Text("SIGN IN", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Belum memiliki akun? ", style: TextStyle(color: Colors.grey)),
+                            GestureDetector(
+                              onTap: () => Navigator.pushNamed(context, AppRoutes.signup),
+                              child: const Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                  color: Color(0xFF395886),
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  /// CARD LOGIN
-  Widget _loginCard(BuildContext context) {
-    return Transform.translate(
-      offset: const Offset(0, -50),
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        elevation: 6,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Sign In',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2E3A59),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Masuk menggunakan email / NIM kampus',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 24),
-
-                _inputField(
-                  controller: emailController,
-                  label: 'Email / NIM',
-                  icon: Icons.person_outline,
-                  validator: (v) =>
-                      v!.isEmpty ? 'Email tidak boleh kosong' : null,
-                ),
-
-                const SizedBox(height: 16),
-
-                _inputField(
-                  controller: passwordController,
-                  label: 'Password',
-                  icon: Icons.lock_outline,
-                  obscure: true,
-                  validator: (v) =>
-                      v!.length < 6 ? 'Password minimal 6 karakter' : null,
-                ),
-
-                const SizedBox(height: 24),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5B8DEF),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      }
-                    },
-                    child: const Text(
-                      'SIGN IN',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// TEXT FIELD
-  Widget _inputField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    bool obscure = false,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscure,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF5B8DEF)),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
         ),
       ),
     );
