@@ -13,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFDE7),
+      backgroundColor: const Color(0xFFF4F8FF),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       height: 300,
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Color(0xFFFFE082),
+        color: Color(0xFF5B8DEF),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(40),
           bottomRight: Radius.circular(40),
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(
               fontSize: 38,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF424242),
+              color: Colors.white,
               letterSpacing: 2,
             ),
           ),
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF616161),
+                color: Colors.white70,
               ),
             ),
           ),
@@ -73,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 24),
         elevation: 6,
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
@@ -88,13 +89,13 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF424242),
+                    color: Color(0xFF2E3A59),
                   ),
                 ),
                 const SizedBox(height: 6),
                 const Text(
                   'Masuk menggunakan email / NIM kampus',
-                  style: TextStyle(color: Color(0xFF757575)),
+                  style: TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 24),
 
@@ -124,8 +125,8 @@ class _LoginPageState extends State<LoginPage> {
                   height: 48,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFF176),
-                      foregroundColor: const Color(0xFF424242),
+                      backgroundColor: const Color(0xFF5B8DEF),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -163,9 +164,9 @@ class _LoginPageState extends State<LoginPage> {
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Color(0xFFFFE082)),
+        prefixIcon: Icon(icon, color: const Color(0xFF5B8DEF)),
         filled: true,
-        fillColor: const Color(0xFFFFFDE7),
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
