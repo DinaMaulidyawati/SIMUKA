@@ -13,8 +13,17 @@ class SimukaApp extends StatelessWidget {
     return MaterialApp(
       title: 'SIMUKA',
       debugShowCheckedModeBanner: false,
+
+      // Routing
       initialRoute: AppRoutes.login,
       routes: AppRoutes.routes,
+
+      // Theme 
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF4F8FF),
+        primaryColor: const Color(0xFF5B8DEF),
+      ),
     );
   }
 }
