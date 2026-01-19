@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'detail_kegiatan_pages.dart';
-import 'anggota_page.dart'; // Import halaman anggota yang tadi dibuat
+import '../home/anggota_page.dart'; // Import halaman anggota yang tadi dibuat
 
 class KegiatanPage extends StatelessWidget {
   final String ukmName;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../presentation/pages/login_page.dart';
-import '../presentation/pages/home_page.dart';
+import '../presentation/pages/auth/login_page.dart';
+import '../presentation/pages/home/home_page.dart';
 
 class AppRoutes {
   static const login = '/';

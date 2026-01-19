@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'kegiatan_pages.dart';
-import 'app_state.dart'; 
-import 'pengaturan_page.dart'; 
-import 'login_page.dart';
+import '../kegiatan/kegiatan_pages.dart';
+import '../state/app_state.dart'; 
+import '../profile/pengaturan_page.dart'; 
+import '../auth/login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

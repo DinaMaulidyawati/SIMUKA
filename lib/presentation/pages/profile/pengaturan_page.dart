@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'lupa_password_page.dart'; // Import halaman awal ubah password
-import 'bantuan_page.dart'; // Import halaman FAQ
+import '../auth/lupa_password_page.dart'; // Import halaman awal ubah password
+import '../bantuan/bantuan_page.dart'; // Import halaman FAQ
 
 class PengaturanPage extends StatefulWidget {
   const PengaturanPage({super.key});
