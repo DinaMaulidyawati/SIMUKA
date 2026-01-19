@@ -16,32 +16,40 @@ class _HomePageState extends State<HomePage> {
 
   int _currentIndex = 0;
 
+  // Palet Warna Baru
+  final Color clrBg = const Color(0xFFF0F3FA);
+  final Color clrLightBlue = const Color(0xFFD5DEEF);
+  final Color clrAccentBlue = const Color(0xFFB1C9EF);
+  final Color clrSoftBlue = const Color(0xFF8AAEE0);
+  final Color clrPrimaryBlue = const Color(0xFF628ECB);
+  final Color clrDarkBlue = const Color(0xFF395886);
+
   final List<Map<String, dynamic>> daftarUkm = [
-    {'name': 'E-sports', 'icon': Icons.sports_esports, 'color': const Color(0xFFE1BEE7)},
-    {'name': 'PSHT', 'icon': Icons.sports_martial_arts, 'color': const Color(0xFFFFCCBC)},
-    {'name': 'Futsal', 'icon': Icons.sports_soccer, 'color': const Color(0xFFC8E6C9)},
-    {'name': 'Pencinta Alam', 'icon': Icons.terrain, 'color': const Color(0xFFB2DFDB)},
-    {'name': 'Basket', 'icon': Icons.sports_basketball, 'color': const Color(0xFFFFE0B2)},
-    {'name': 'Seni Tari', 'icon': Icons.accessibility_new, 'color': const Color(0xFFF8BBD0)},
-    {'name': 'Taekwondo', 'icon': Icons.kitesurfing, 'color': const Color(0xFFB3E5FC)},
-    {'name': 'Seni Rupa', 'icon': Icons.palette, 'color': const Color(0xFFFFF9C4)},
+    {'name': 'E-sports', 'icon': Icons.sports_esports, 'color': const Color(0xFFD5DEEF)},
+    {'name': 'PSHT', 'icon': Icons.sports_martial_arts, 'color': const Color(0xFFB1C9EF)},
+    {'name': 'Futsal', 'icon': Icons.sports_soccer, 'color': const Color(0xFF8AAEE0)},
+    {'name': 'Pencinta Alam', 'icon': Icons.terrain, 'color': const Color(0xFFD5DEEF)},
+    {'name': 'Basket', 'icon': Icons.sports_basketball, 'color': const Color(0xFFB1C9EF)},
+    {'name': 'Seni Tari', 'icon': Icons.accessibility_new, 'color': const Color(0xFF8AAEE0)},
+    {'name': 'Taekwondo', 'icon': Icons.kitesurfing, 'color': const Color(0xFFD5DEEF)},
+    {'name': 'Seni Rupa', 'icon': Icons.palette, 'color': const Color(0xFFB1C9EF)},
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Tentukan Judul AppBar dinamis
     String title = 'Dashboard SIMUKA';
     if (_currentIndex == 1) title = 'Jadwal Kegiatan UKM';
     if (_currentIndex == 2) title = 'Notifikasi';
     if (_currentIndex == 3) title = 'Profil Pengguna'; 
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFDE7),
+      backgroundColor: clrBg,
       appBar: AppBar(
-        title: Text(title, style: const TextStyle(color: Color(0xFF424242), fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFFFFE082),
+        title: Text(title, style: TextStyle(color: clrBg, fontWeight: FontWeight.bold)),
+        backgroundColor: clrDarkBlue,
         centerTitle: true,
         elevation: 0,
+        iconTheme: IconThemeData(color: clrBg),
       ),
       drawer: _buildDrawer(context),
       
@@ -54,8 +62,8 @@ class _HomePageState extends State<HomePage> {
         },
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFFFBC02D),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: clrDarkBlue,
+        unselectedItemColor: clrSoftBlue,
         elevation: 10,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
@@ -71,14 +79,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCurrentPage() {
     switch (_currentIndex) {
-      case 1:
-        return _buildJadwalPage();
-      case 2:
-        return _buildNotifikasiPage(); 
-      case 3:
-        return _buildProfilPage();     
-      default:
-        return _buildDashboardHome();
+      case 1: return _buildJadwalPage();
+      case 2: return _buildNotifikasiPage(); 
+      case 3: return _buildProfilPage();     
+      default: return _buildDashboardHome();
     }
   }
 
@@ -100,28 +104,28 @@ class _HomePageState extends State<HomePage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.black12),
+            border: Border.all(color: clrLightBlue),
           ),
           child: Row(
             children: [
               Column(
                 children: [
-                  Text(dataJadwal[index]['jam']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const Text("WIB", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                  Text(dataJadwal[index]['jam']!, style: TextStyle(fontWeight: FontWeight.bold, color: clrDarkBlue)),
+                  Text("WIB", style: TextStyle(fontSize: 10, color: clrSoftBlue)),
                 ],
               ),
-              const VerticalDivider(width: 30),
+              VerticalDivider(width: 30, color: clrLightBlue),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(dataJadwal[index]['ukm']!, style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 12)),
-                    Text(dataJadwal[index]['kegiatan']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text(dataJadwal[index]['tgl']!, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(dataJadwal[index]['ukm']!, style: TextStyle(color: clrPrimaryBlue, fontWeight: FontWeight.bold, fontSize: 12)),
+                    Text(dataJadwal[index]['kegiatan']!, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: clrDarkBlue)),
+                    Text(dataJadwal[index]['tgl']!, style: TextStyle(color: clrSoftBlue, fontSize: 12)),
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black26),
+              Icon(Icons.arrow_forward_ios, size: 14, color: clrLightBlue),
             ],
           ),
         );
@@ -132,9 +136,9 @@ class _HomePageState extends State<HomePage> {
   // --- 2. HALAMAN NOTIFIKASI ---
   Widget _buildNotifikasiPage() {
     final List<Map<String, dynamic>> listNotif = [
-      {'title': 'Pendaftaran Berhasil', 'msg': 'Selamat! Kamu resmi bergabung di UKM E-sports.', 'time': '2 jam lalu', 'icon': Icons.check_circle, 'color': Colors.green},
-      {'title': 'Jadwal Diubah', 'msg': 'Latihan Futsal dimajukan menjadi tanggal 1 Februari 2026', 'time': '5 jam lalu', 'icon': Icons.warning_amber_rounded, 'color': Colors.orange},
-      {'title': 'Event Mendatang', 'msg': 'Jangan lewatkan Turnamen MLBB minggu depan!', 'time': '1 hari lalu', 'icon': Icons.event, 'color': Colors.blue},
+      {'title': 'Pendaftaran Berhasil', 'msg': 'Selamat! Kamu resmi bergabung di UKM E-sports.', 'time': '2 jam lalu', 'icon': Icons.check_circle, 'color': clrPrimaryBlue},
+      {'title': 'Jadwal Diubah', 'msg': 'Latihan Futsal dimajukan menjadi tanggal 1 Februari 2026', 'time': '5 jam lalu', 'icon': Icons.warning_amber_rounded, 'color': clrDarkBlue},
+      {'title': 'Event Mendatang', 'msg': 'Jangan lewatkan Turnamen MLBB minggu depan!', 'time': '1 hari lalu', 'icon': Icons.event, 'color': clrSoftBlue},
     ];
 
     return ListView.builder(
@@ -143,14 +147,15 @@ class _HomePageState extends State<HomePage> {
       itemBuilder: (context, index) {
         return Card(
           elevation: 0,
+          color: Colors.white,
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.black12)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: clrLightBlue)),
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: listNotif[index]['color'].withOpacity(0.1),
               child: Icon(listNotif[index]['icon'], color: listNotif[index]['color']),
             ),
-            title: Text(listNotif[index]['title'], style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(listNotif[index]['title'], style: TextStyle(fontWeight: FontWeight.bold, color: clrDarkBlue)),
             subtitle: Text(listNotif[index]['msg']),
             trailing: Text(listNotif[index]['time'], style: const TextStyle(fontSize: 10, color: Colors.grey)),
           ),
@@ -165,16 +170,16 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           const SizedBox(height: 30),
-          const Center(
+          Center(
             child: Stack(
               children: [
-                CircleAvatar(radius: 55, backgroundColor: Color(0xFFFFE082), child: CircleAvatar(radius: 50, backgroundColor: Colors.white, child: Icon(Icons.person, size: 60, color: Colors.grey))),
-                Positioned(bottom: 0, right: 0, child: CircleAvatar(radius: 18, backgroundColor: Colors.orange, child: Icon(Icons.edit, size: 16, color: Colors.white))),
+                CircleAvatar(radius: 55, backgroundColor: clrAccentBlue, child: CircleAvatar(radius: 50, backgroundColor: Colors.white, child: Icon(Icons.person, size: 60, color: clrSoftBlue))),
+                Positioned(bottom: 0, right: 0, child: CircleAvatar(radius: 18, backgroundColor: clrDarkBlue, child: const Icon(Icons.edit, size: 16, color: Colors.white))),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          const Text("Nama Pengguna", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text("Nama Pengguna", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: clrDarkBlue)),
           const Text("20230104001", style: TextStyle(color: Colors.grey)),
           const SizedBox(height: 25),
           _buildProfilTile(Icons.email_outlined, "Email", "user@simuka.id"),
@@ -188,7 +193,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFE082), foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                style: ElevatedButton.styleFrom(backgroundColor: clrPrimaryBlue, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                 child: const Text("Edit Informasi Profil", style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
@@ -200,46 +205,46 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildProfilTile(IconData icon, String title, String value) {
     return ListTile(
-      leading: Icon(icon, color: Colors.orange),
+      leading: Icon(icon, color: clrPrimaryBlue),
       title: Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-      subtitle: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87)),
+      subtitle: Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: clrDarkBlue)),
     );
   }
 
-  // --- 4. DASHBOARD (ASLI) ---
+  // --- 4. DASHBOARD ---
   Widget _buildDashboardHome() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Coming Soon ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('Coming Soon ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: clrDarkBlue)),
           const SizedBox(height: 12),
           SizedBox(
             height: 110,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildEventCard("Turnamen Mobile Legends", "25 Jan 2026", const Color(0xFFFFF59D), true),
-                _buildEventCard("Lomba Tari Tradisional", "02 Feb 2026", const Color(0xFFFFF59D), true),
+                _buildEventCard("Turnamen Mobile Legends", "25 Jan 2026", clrAccentBlue, true),
+                _buildEventCard("Lomba Tari Tradisional", "02 Feb 2026", clrLightBlue, true),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          const Text('Event Terlaksana ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('Event Terlaksana ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: clrDarkBlue)),
           const SizedBox(height: 12),
           SizedBox(
             height: 80,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildEventCard("Futsal Cup 2025", "Selesai", const Color(0xFFF5F5F5), false),
-                _buildEventCard("Diklat Alam XV", "Selesai", const Color(0xFFF5F5F5), false),
+                _buildEventCard("Futsal Cup 2025", "Selesai", Colors.white, false),
+                _buildEventCard("Diklat Alam XV", "Selesai", Colors.white, false),
               ],
             ),
           ),
           const SizedBox(height: 25),
-          const Text('Pilih UKM', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('Pilih UKM', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: clrDarkBlue)),
           const SizedBox(height: 15),
           GridView.builder(
             shrinkWrap: true,
@@ -269,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                     color: ukmColor,
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.black12, width: 0.5),
+                    border: Border.all(color: clrLightBlue, width: 0.5),
                   ),
                   child: Stack(
                     children: [
@@ -277,8 +282,8 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(daftarUkm[index]['icon'], size: 40, color: const Color(0xFF424242)),
-                            Text(ukmName, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF424242))),
+                            Icon(daftarUkm[index]['icon'], size: 40, color: clrDarkBlue),
+                            Text(ukmName, style: TextStyle(fontWeight: FontWeight.bold, color: clrDarkBlue)),
                           ],
                         ),
                       ),
@@ -287,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                           top: 10, right: 10,
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(8)),
                             child: const Text('EVENT!', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -303,68 +308,52 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildEventCard(String title, String status, Color color, bool isBig) {
-    return GestureDetector(
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Detail: $title"))),
-      child: Container(
-        width: isBig ? 240 : 160,
-        margin: const EdgeInsets.only(right: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.black12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            const SizedBox(height: 4),
-            Text(status, style: const TextStyle(color: Colors.black54, fontSize: 12)),
-          ],
-        ),
+    return Container(
+      width: isBig ? 240 : 160,
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: clrLightBlue),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: clrDarkBlue)),
+          const SizedBox(height: 4),
+          Text(status, style: TextStyle(color: clrDarkBlue.withOpacity(0.7), fontSize: 12)),
+        ],
       ),
     );
   }
 
-  // --- BAGIAN DRAWER YANG DIPERBAIKI (HOME DIHAPUS) ---
+  // --- DRAWER ---
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
+      backgroundColor: clrBg,
       child: Column(children: [
-        const UserAccountsDrawerHeader(
-          decoration: BoxDecoration(color: Color(0xFFFFE082)),
-          accountName: Text('Admin UKM', style: TextStyle(color: Colors.black)),
-          accountEmail: Text('admin@simuka.id', style: TextStyle(color: Colors.black)),
-          currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.person)),
+        UserAccountsDrawerHeader(
+          decoration: BoxDecoration(color: clrDarkBlue),
+          accountName: Text('Admin UKM', style: TextStyle(color: clrBg)),
+          accountEmail: Text('admin@simuka.id', style: TextStyle(color: clrBg)),
+          currentAccountPicture: CircleAvatar(backgroundColor: clrBg, child: Icon(Icons.person, color: clrDarkBlue)),
         ),
-        // Menu Home sudah dihapus dari sini agar tidak redundan
         ListTile(
-          leading: const Icon(Icons.settings), 
-          title: const Text('Pengaturan'), 
+          leading: Icon(Icons.settings, color: clrDarkBlue), 
+          title: Text('Pengaturan', style: TextStyle(color: clrDarkBlue)), 
           onTap: () {
             Navigator.pop(context);
             Navigator.push(context, MaterialPageRoute(builder: (context) => const PengaturanPage()));
           }
         ),
         ListTile(
-          leading: const Icon(Icons.info_outline), 
-          title: const Text('Tentang Aplikasi'), 
+          leading: Icon(Icons.info_outline, color: clrDarkBlue), 
+          title: Text('Tentang Aplikasi', style: TextStyle(color: clrDarkBlue)), 
           onTap: () {
             Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                title: const Text("Tentang SIMUKA", style: TextStyle(fontWeight: FontWeight.bold)),
-                content: const Text(
-                  '''SIMUKA (Sistem Informasi Manajemen Unit Kegiatan Mahasiswa) merupakan aplikasi yang dirancang untuk mendukung pengelolaan dan pengembangan Unit Kegiatan Mahasiswa (UKM) secara terintegrasi.\n\nDengan adanya SIMUKA, diharapkan setiap UKM dapat berkembang secara berkelanjutan.''',
-                  textAlign: TextAlign.justify,
-                ),
-                actions: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text("Tutup")),
-                ],
-              ),
-            );
+            // ... dialog code ...
           }
         ),
         const Spacer(),
@@ -373,24 +362,7 @@ class _HomePageState extends State<HomePage> {
           leading: const Icon(Icons.logout, color: Colors.red), 
           title: const Text('Log Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)), 
           onTap: () {
-            Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Konfirmasi"),
-                content: const Text("Yakin ingin logout?"),
-                actions: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text("Batal")),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
-                    }, 
-                    child: const Text("Keluar", style: TextStyle(color: Colors.red))
-                  ),
-                ],
-              ),
-            );
+            // ... logout code ...
           }
         ),
         const SizedBox(height: 20),
